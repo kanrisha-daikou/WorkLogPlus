@@ -1,0 +1,6 @@
+package com.example.WorkLogPlus.dto;
+
+public record UserDto(
+		Long id,
+		String username) {
+}

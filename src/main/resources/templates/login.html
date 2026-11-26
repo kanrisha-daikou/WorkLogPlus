@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WorkLogPlus login</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+</head>
+<body class="bg-light">
+	
+	<div class="container d-flex justify-content-center align-items-center min-vh-100">
+		<div class="card shadow border-0 p-4" style="width: 100%; max-width: 400px;">
+			<div class="text-center mb-4">
+				<h1 class="h3 fw-bold text-dark mb-1">WorkLogPlus</h1>
+				<p class="text-muted small">ログインしてアレをアレしてください</p>
+				<!-- ログアウト成功時のメッセージを表示する -->
+				<div th:if="${logoutMessage}" class="alert alert-success text-center small mb-1" role="alert">
+					<span th:text="${logoutMessage}"></span>
+				</div>
+				<!-- エラーメッセージ -->
+				<div th:if="${errorMessage}" class="alert alert-danger text-center small mb-1" role="alert">
+					<span th:text="${errorMessage}">認証エラーのメッセージ</span>
+				</div>
+				<!-- 登録OKメッセージ -->
+				<div th:if="${okMessage}" class="alert alert-success text-center small mb-1" role="alert">
+					<span th:text="${okMessage}" style="white-space: pre-wrap;">ユーザー登録完了メッセージ</span>
+				</div>
+			</div>
+			
+			<form th:action="@{/login}" method="post">
+				<div class="mb-3">
+					<label for="email" class="form-label small fw-bold">メールアドレス</label>
+					<input type="email" id="email" name="username" class="form-control" placeholder="example@email.com" required>
+				</div>
+				<div class="mb-5">
+					<label for="password" class="form-label small fw-bold">パスワード</label>
+					<input type="password" id="password" name="password" class="form-control" placeholder="........" required>
+				</div>
+				<button type="submit" class="btn btn-dark w-100 py-2 fw-bold mb-4">ログイン</button>
+			</form>
+			
+			<div class="text-center border-top pt-3">
+				<a th:href="@{/register}" class="btn btn-outline-secondary btn-sm w-100">
+					新規アカウント登録はこちら
+				</a>
+			</div>
+		</div>
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+</body>
+</html>

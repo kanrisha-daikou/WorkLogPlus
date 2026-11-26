@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="_csrf" th:content="${_csrf.token}"/><!-- Spring Security 用の合言葉 -->
+<meta name="_csrf_header" th:content="${_csrf.headerName}"/><!-- Spring Security 用の合言葉 -->
+<title>WorkLogPlus admin-tasks</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body class="bg-light">
+	<div th:replace="~{fragments/layout :: navMenu}"></div>
+
+	<main id="userMain" class="container my-4">
+		
+		<!-- ページヘッダー -->
+		<div class="mb-4 pb-2 border-bottom">
+			<div class="mb-2"><!-- パンくず（タイトルの上に控えめに配置） -->
+				<a th:href="@{/tasks}" class="text-secondary small fw-bold text-decoration-none">
+					<i class="bi bi-chevron-left me-1"></i>自分のタスク一覧
+				</a>
+			</div>
+			
+			<h2 class="fw-bold text-dark m-0">
+				<i class="bi bi-people-fill text-primary me-2"></i>全ユーザーのタスク進捗
+			</h2>
+		</div>
+	
+		<!-- ================= ソートボタン！ ================= -->
+		<th:block th:replace="~{fragments/task_sort :: sortButton('/tasks/admin')}"></th:block>
+		<!-- ================= タブ切替ボタン ================= -->
+		<ul id="taskTabList" class="nav nav-pills nav-fill mb-3 bg-light p-1 rounded border" role="tablist">
+			<li class="nav-item">
+				<button class="nav-link small fw-bold" data-status="TODO">
+					未着手（<span th:text="${#lists.size(tasks.?[status == 'TODO'])}">0</span>）
+				</button>
+			</li>
+			<li class="nav-item">
+				<button class="nav-link small fw-bold" data-status="DOING">
+					進行中（<span th:text="${#lists.size(tasks.?[status == 'DOING'])}">0</span>）
+				</button>
+			</li>
+			<li class="nav-item">
+				<button class="nav-link small fw-bold" data-status="DONE">
+					完了済（<span th:text="${#lists.size(tasks.?[status =='DONE'])}">0</span>）
+				</button>
+			</li>
+			<li class="nav-item">
+				<button class="nav-link active small fw-bold" data-status="all">
+					すべて（<span th:text="${#lists.size(tasks)}">0</span>）
+				</button>
+			</li>
+		</ul>
+		<!-- ================================================== -->
+			
+			
+		<!-- タブ中身（PC時は３列横並び表示） -->
+		<div id="task-container" class="row g-4">
+				
+			<!-- 【未着手】セクション -->
+			<div class="col-xl-4">
+				<div class="task-section p-3 bg-light rounded shadow-sm border-top border-secondary border-4" data-section-status="TODO">
+					<h5 class="fw-bold text-secondary mb-3">未着手</h5>
+					<div th:if="${#lists.isEmpty(tasks.?[status == 'TODO'])}" class="text-center text-muted my-4">
+						<p>未着手のタスクはありません</p>
+					</div>
+					
+					<!-- ループ開始 -->
+					<th:block th:each="task : ${tasks}" th:if="${task.status == 'TODO'}">
+						<div th:replace="~{fragments/admin_task :: taskCard(${task}, 'text-secondary')}"></div>
+					</th:block>
+				</div>
+			</div>
+				
+			<!-- 【進行中】セクション -->
+			<div class="col-xl-4">
+				<div class="task-section p-3 bg-light rounded shadow-sm border-top border-primary border-4" data-section-status="DOING">
+					<h5 class="fw-bold text-primary mb-3">進行中</h5>
+					<div th:if="${#lists.isEmpty(tasks.?[status == 'DOING'])}" class="text-center text-muted my-4">
+						<p>進行中のタスクはありません</p>
+					</div>
+					
+					<th:block th:each="task : ${tasks}" th:if="${task.status == 'DOING'}">
+						<div th:replace="~{fragments/admin_task :: taskCard(${task}, text-primary)}"></div>
+					</th:block>
+				</div>
+			</div>
+				
+			<!-- 【完了済】セクション -->
+			<div class="col-xl-4">
+				<div class="task-section p-3 bg-light rounded shadow-sm border-top border-success border-4" data-section-status="DONE">
+					<h5 class="fw-bold text-success mb-3">完了済</h5>
+					<div th:if="${#lists.isEmpty(tasks.?[status == 'DONE'])}" class="text-center text-muted my-4">
+						<p>完了済のタスクはありません</p>
+					</div>
+					
+					<div th:each="task : ${tasks}" th:if="${task.status == 'DONE'}" style="will-change: transform, opacity;">
+						<div th:replace="~{fragments/admin_task :: taskCard(${task}, text-success)}"></div>
+					</div>
+				</div>
+			</div>
+			
+		</div>
+		
+	</main>
+	
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+	<!--非同期通信-->
+	<script th:src="@{/js/task.js}"></script>
+</body>
+</html>

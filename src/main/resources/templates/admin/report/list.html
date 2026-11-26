@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WorkLogPlus admin-reports</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body class="bg-light">
+	<div th:replace="~{fragments/layout :: navMenu}"></div>
+	
+	<main class="container py-4">
+		
+		<!-- ヘッダー -->
+		<div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom flex-wrap gap-2">
+			<h2 class="fw-bold text-dark m-0"><i class="bi bi-file-earmark-person text-danger me-2"></i>日報管理（全ユーザ一覧）</h2>
+			<a th:href="@{/admin/reports/new}" class="btn btn-primary btn-sm fw-bold px-3 ms-auto">日報作成</a>
+		</div>
+		
+		<!-- ユーザー選択フォーム -->
+		<form th:action="@{/admin/reports}" method="get" class="mb-2 col-md-4">
+			<div class="input-group input-group-sm shadow-sm">
+				<label class="input-group-text bg-light text-secondary small fw-bold" for="searchUserId">
+					<i class="bi bi-person-lines-fill"></i>
+				</label>
+				
+				<!-- 💡 ユーザー選択プルダウン -->
+				<select class="form-select" id="searchUserId" name="searchUserId" onchange="this.form.submit()">
+					<option value="">全てのユーザーを表示</option>
+					<!-- 全ユーザ(users)をループして選択肢を作る -->
+					<option th:each="user : ${users}" 
+							th:value="${user.id}" 
+							th:text="${user.username}"
+							th:selected="${user.id == searchUserId}">山田 太郎</option>
+				</select>
+				
+				<!-- 💡 絞り込み中のみ「解除（×）」ボタンを出す -->
+				<a th:if="${searchUserId != null}" th:href="@{/admin/reports}" class="btn btn-outline-danger">
+					<i class="bi bi-x-lg"></i>
+				</a>
+			</div>
+		</form>
+
+		<!-- 成功メッセージエリア -->
+		<div th:if="${okMessage}" class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+			<i class="bi bi-check-circle-fill me-2"></i>
+			<span th:text="${okMessage}"></span>
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+		</div>
+
+		<!-- 日報が1件もない場合の表示 -->
+		<div th:if="${#lists.isEmpty(reports)}" class="text-center text-muted my-5 py-5 bg-white rounded border shadow-sm">
+			<i class="bi bi-journal-x fs-1 text-black-50 mb-3 d-block"></i>
+			<p class="m-0">提出された日報はありません</p>
+		</div>
+
+		<!-- 日報リスト -->
+		<div class="row row-cols-1 g-2" th:if="${!#lists.isEmpty(reports)}">
+			<div class="col" th:each="reportDto : ${reports}">
+				<!-- 💡 cardに position-relative クラスを付与（カードクリック化の必須設定） -->
+				<a th:href="@{/admin/reports/{id}(id=${reportDto.id})}" 
+				class="card shadow-sm list-group-item-action text-decoration-none d-block">
+					<div class="card-body p-3 d-flex flex-column gap-2">
+						
+						<!-- 1行目：（提出者名 ---------------- 日付） -->
+						<div class="d-flex justify-content-between align-items-center gap-2">
+							<!-- 名前バッジ -->
+							<span class="badge bg-dark fw-bold text-truncate" style="font-size: 0.8rem;">
+								<i class="bi me-1" th:classappend="${reportDto.isOwn} ? 'bi-file-earmark-person text-danger' : 'bi-person-fill'"></i>
+								<span th:text="${reportDto.username}">提出者名</span>
+							</span>
+							
+							<!-- 日付 -->
+							<span class="text-primary fw-bold small" th:text="${reportDto.reportDate}">2026/07/24(金)</span>
+						</div>
+							
+						<!-- 2行目：（業務内容の冒頭 ---------------- ステータスバッジ） -->
+						<div class="d-flex justify-content-between align-items-center flex-nowrap gap-2">
+							<!-- 左端：業務内容の冒頭 text-truncate で長い文章の末尾を「…」に -->
+							<p class="card-text text-secondary small text-truncate m-0" th:text="${reportDto.content}">業務内容のあらすじがここに入ります。</p>
+							
+							<!-- 右端：ステータスバッジ -->
+							<div class="text-nowrap ms-auto">
+								<!-- 他人の日報の場合 -->
+								<span th:if="${!reportDto.isOwn}">
+									<span th:if="${reportDto.commentCount > 0}" class="badge bg-success shadow-sm" style="font-size: 0.7rem;">
+										<i class="bi bi-chat-left-text-fill me-1"></i>対応済
+									</span>
+									<span th:if="${reportDto.commentCount == 0}" class="badge bg-warning text-dark shadow-sm" style="font-size: 0.7rem;">
+										<i class="bi bi-chat-left-text me-1"></i>未対応
+									</span>
+								</span>
+								
+								<!-- 管理者本人の場合（コメントが無ければ非表示） -->
+								<div th:if="${reportDto.isOwn && (reportDto.commentCount > 0)}" class="d-flex align-items-center ms-2">
+									<span class="text-secondary small d-flex align-items-center">
+										<i class="bi bi-chat-left-text-fill text-success me-1"></i>
+										<span th:text="${reportDto.commentCount}">1</span>件
+									</span>
+									<span th:if="${reportDto.unRead}" class="badge bg-danger ms-2" style="font-size: 0.65rem; padding: 0.2em 0.5em;">未読あり</span>
+								</div>
+							</div>
+						</div>
+							
+					</div>
+				</a>
+			</div>
+		</div>
+		
+	</main>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+</body>
+</html>

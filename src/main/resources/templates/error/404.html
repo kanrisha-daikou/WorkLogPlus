@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>404 Not Found</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body class="bg-light d-flex align-items-center justify-content-center vh-100">
+	<div class="text-center p-5 bg-white rounded shadow-sm" style="max-width: 500px;">
+	    <h1 class="text-primary fw-bold display-1"><i class="bi bi-file-earmark-x-fill"></i></h1>
+	    <h2 class="fw-bold text-dark mb-3 fs-3">ページが見つかりません</h2>
+	    <p class="text-secondary small mb-4">
+	        お探しのページは、アドレスが変更されたか、<br>
+	        すでに削除されてしまった可能性があります。
+	    </p>
+	    <a th:href="@{/}" class="btn btn-primary px-4 fw-bold shadow-sm">トップページへ戻る</a>
+	</div>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title></title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body class="bg-light">
+<main id="userMain" class="container my-4">
+	
+	<div th:fragment="sortButton(baseUrl)">
+		
+		<a th:href="@{__${baseUrl}__(sort=${currentSort == 'desc' ? 'asc' : 'desc'})}" 
+		   class="btn btn-outline-secondary btn-sm fw-bold px-3 text-nowrap"
+		   th:title="${currentSort == 'desc' ? '期限の遠い順（クリックで近い順へ）' : '期限の近い順（クリックで遠い順へ）'}">
+			<th:block th:if="${currentSort == 'desc'}">
+				<i class="bi bi-hourglass-top text-primary me-1"></i>
+				<span>期限の遠い順</span>
+			</th:block>
+			<th:block th:if="${currentSort == 'asc' || currentSort == null}">
+				<i class="bi bi-hourglass-split text-primary me-1"></i>
+				<span>期限の近い順</span>
+			</th:block>
+		</a>
+		
+	</div>
+
+</main>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+</body>
+</html>

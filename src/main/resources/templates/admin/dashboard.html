@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org" th:with="STATUS=${T(com.example.WorkLogPlus.entity.TaskStatus)}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WorkLogPlus admin-dashboard</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body class="bg-light">
+	<div th:replace="~{fragments/layout :: navMenu}"></div>
+	
+	<main id="userMain" class="container mb-4">
+	
+		<!-- ==========================================
+			① スマホ用ヘッダー（PCでは非表示：d-md-none）
+			========================================== -->
+		<div class="d-flex flex-column my-4 pb-2 border-bottom gap-2 d-md-none">
+			<!-- タイトル -->
+			<h2 class="fw-bold text-dark m-0">
+				<i class="bi bi-speedometer2 text-primary me-2"></i>ダッシュボード
+			</h2>
+			<!-- 2行目：横幅をぴったり2分割するボタンエリア -->
+			<div class="d-flex flex-wrap w-100 gap-2">
+				<a th:href="@{/tasks/admin}" class="btn btn-primary btn-sm fw-bold flex-fill text-nowrap">全ユーザーのタスク管理へ</a>
+				<a th:href="@{/admin/reports}" class="btn btn-primary btn-sm fw-bold flex-fill text-nowrap">全ユーザーの日報管理へ</a>
+			</div>
+		</div>
+		
+		<!-- ==========================================
+			 ② PC用ヘッダー（スマホでは非表示：d-none、PCで表示：d-md-flex）
+			========================================== -->
+		<div class="d-none d-md-flex align-items-center justify-content-between my-4 pb-2 border-bottom">
+			<!-- 左側：タイトル -->
+			<h2 class="fw-bold text-dark m-0 text-nowrap">
+				<i class="bi bi-speedometer2 text-primary me-2"></i>ダッシュボード
+			</h2>
+			<!-- 右側：コンパクトにまとまるボタン -->
+			<div class="d-flex gap-2 text-nowrap">
+				<a th:href="@{/tasks/admin}" class="btn btn-primary btn-sm fw-bold">全ユーザーのタスク管理へ</a>
+				<a th:href="@{/admin/reports}" class="btn btn-primary btn-sm fw-bold">全ユーザーの日報管理へ</a>
+			</div>
+		</div>
+	
+		<!-- 未読フィードバックの通知 -->
+		<div th:if="${hasUnreadComments}" class="alert alert-warning shadow-sm gap-2 mb-4 d-flex flex-wrap align-items-center" role="alert">
+			<i class="bi bi-bell-fill text-danger fs-4"></i>
+			<div>
+				<span class="fw-bold text-dark">未読のフィードバックがあります</span>
+				<span class="text-muted small d-block">日報一覧からご確認ください</span>
+			</div>
+			<a th:href="@{/reports}" class="btn btn-warning btn-sm ms-auto fw-bold">確認する</a>
+		</div>
+		
+		<div th:replace="~{fragments/board_components :: boardMain('自分の一覧へ', '自分の一覧へ')}"></div>
+		
+	</main>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+</body>
+</html>

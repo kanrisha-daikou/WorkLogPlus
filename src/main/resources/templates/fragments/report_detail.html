@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title></title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body class="bg-light">
+<main id="userMain" class="container py-4">
+
+	<!-- 日報詳細本文カード -->
+	<div th:fragment="detailCard" class="card shadow mb-4">
+		<div class="card-body p-4">
+			<!-- 業務内容 -->
+			<section class="mb-4 p-3 bg-light rounded border-start border-3 border-primary">
+				<h5 class="text-muted small mb-2"><i class="bi bi-briefcase me-1"></i>業務内容</h5>
+				<p class="card-text text-dark fs-5" style="white-space: pre-wrap;" th:text="${reportDto.content}">業務内容の全文。</p>
+			</section>
+			
+			<!-- 所感（なければ非表示 -->
+			<section class="mb-4 p-3 bg-light rounded border-start border-3 border-secondary" th:if="${!#strings.isEmpty(reportDto.impressions)}">
+				<h5 class="text-muted small mb-2"><i class="bi bi-chat-left-text me-1"></i>所感</h5>
+				<p class="card-text text-secondary" style="white-space: pre-wrap;" th:text="${reportDto.impressions}">所感の全文。</p>
+			</section>
+			
+			<!-- 課題（なければ非表示） -->
+			<section class="p-3 bg-light rounded border-start border-3 border-danger" th:if="${!#strings.isEmpty(reportDto.issues)}">
+				<h5 class="text-danger small mb-2"><i class="bi bi-exclamation-triangle-fill me-1"></i>課題</h5>
+				<p class="card-text text-danger-emphasis" style="white-space: pre-wrap;" th:text="${reportDto.issues}">課題の全文。</p>
+			</section>
+		</div>
+		
+		<!-- フッター（タイムスタンプ） -->
+		<div class="card-footer bg-light border-top text-end pe-4">
+			<small class="text-muted small"><i class="bi bi-clock me-1"></i>この日報は <span th:text="${reportDto.createdAt}">2026/07/24 10:00</span> に登録されました</small>
+		</div>
+
+	</div>
+	
+</main>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+</body>
+</html>

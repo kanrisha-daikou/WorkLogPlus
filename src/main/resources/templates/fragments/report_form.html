@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title></title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body class="bg-light">
+<main id="userMain" class="container py-4">
+		
+	<div th:fragment="formCard" class="card shadow-sm mb-4">
+		<div class="card-body p-4">
+			
+			<!-- 1. 日付入力欄 -->
+			<div class="mb-3">
+				<label for="reportDate" class="form-label fw-bold small text-muted">日付</label>
+				<input type="date" th:field="*{reportDate}" class="form-control">
+				<div th:if="${#fields.hasErrors('reportDate')}" th:errors="*{reportDate}" class="text-danger small mt-1"></div>
+			</div>
+			
+			<!-- 2. 業務内容入力欄 -->
+			<div class="mb-3">
+				<label for="content" class="form-label fw-bold small text-muted">業務内容</label>
+				<textarea th:field="*{content}" class="form-control" rows="6"></textarea>
+				<div th:if="${#fields.hasErrors('content')}" th:errors="*{content}" class="text-danger small mt-1"></div>
+			</div>
+			
+			<!-- 3. 所感入力欄 -->
+			<div class="mb-3">
+				<label for="impressions" class="form-label fw-bold small text-muted">所感</label>
+				<textarea th:field="*{impressions}" class="form-control" rows="4"></textarea>
+				<div th:if="${#fields.hasErrors('impressions')}" th:errors="*{impressions}" class="text-danger small mt-1"></div>
+			</div>
+			
+			<!-- 4. 課題入力欄 -->
+			<div class="mb-0">
+				<label for="issues" class="form-label fw-bold small text-muted">課題</label>
+				<textarea th:field="*{issues}" class="form-control" rows="4"></textarea>
+				<div th:if="${#fields.hasErrors('issues')}" th:errors="*{issues}" class="text-danger small mt-1"></div>
+			</div>
+			
+		</div>
+	</div>
+	
+</main>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+</body>
+</html>

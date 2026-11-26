@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title></title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body class="bg-light">
+<main id="userMain" class="container my-4">
+
+	<div th:fragment="spCard(task)" th:id="'task-card-' + ${task.id}" class="card shadow-sm mb-3 fade show">
+		<div class="card-body p-3">
+			
+			<!-- タイトルと削除ボタン -->
+			<div class="d-flex justify-content-between align-items-start mb-2">
+				<div class="task-title-container flex-grow-1 me-2" th:data-task-id="${task.id}">
+					<h6 th:text="${task.title}" class="btn btn-outline-primary  border-0 fw-bold mb-1 task-title-text" onclick="enableTitleEdit(this)">タスクタイトル</h6>
+					<input type="text" th:value="${task.title}" 
+					class="form-control form-control-sm task-title-input d-none" 
+					onblur="saveTitleEdit(this)" 
+					onkeydown="checkTitleEnter(event, this)">
+				</div>
+				<button type="button" th:onclick="deleteTask([[${task.id}]])" class="btn btn-link text-danger p-0 border-0 lh-1" title="削除">
+					<i class="bi bi-trash3 fs-5"></i>
+				</button>
+			</div>
+			
+			<!-- 期限 (日付フォーマットを適用) -->
+			<div class="mb-2">
+				<div class="btn btn-outline-primary btn-sm py-0 px-2 border-0 d-inline-flex align-items-center gap-1 rounded-pill text-muted link-light" 
+				data-bs-toggle="modal" 
+				th:data-bs-target="'#editDateModal-' + ${task.id}">
+					<span><i class="bi bi-calendar-event me-1"></i>期限：</span>
+					<!-- パターンA：期限が【ある】とき -->
+					<span th:id="'dateDisplay-' + ${task.id}" 
+					th:text="${task.dueDate}" 
+					th:classappend="${task.inputDueDate == ''} ? 'd-none'">期限：2026/06/30</span>
+					<!-- パターンB：期限が【ない（未設定）】とき -->
+					<span th:id="'btnText-' + ${task.id}" 
+					th:classappend="${task.inputDueDate != ''} ? 'd-none'">未設定</span>
+				</div>
+			</div>
+			
+			<!-- ステータス変更（ラジオボタン） -->
+			<div class="d-flex align-items-center gap-1 border-top pt-3 px-2">
+				<span class="text-muted small"><i class="bi bi-pencil-square me-1"></i>状態：</span>
+				<div class="btn-group btn-group-sm shadow-sm" role="group">
+				
+					<!-- 未着手（選択時はグレー、それ以外は枠線のみで目立たない） -->
+					<input type="radio" class="btn-check" 
+					th:name="'status-' + ${task.id}" 
+					th:id="'todo-' + ${task.id}" 
+					value="TODO" 
+					th:checked="${task.status == 'TODO'}" 
+					th:onchange="updateStatus([[${task.id}]], this.value)" 
+					autocomplete="off">
+					<label class="btn btn-outline-secondary fw-bold py-0 px-2 small" th:for="'todo-' + ${task.id}">未着手</label>
+					
+					<!-- 進行中（選択時は青、それ以外は枠線のみ） -->
+					<input type="radio" class="btn-check" 
+					th:name="'status-' + ${task.id}" 
+					th:id="'doing-' + ${task.id}" 
+					value="DOING" 
+					th:checked="${task.status == 'DOING'}" 
+					th:onchange="updateStatus([[${task.id}]], this.value)" 
+					autocomplete="off">
+					<label class="btn btn-outline-primary fw-bold py-0 px-2 small" th:for="'doing-' + ${task.id}">進行中</label>
+					
+					<!-- 完了済（選択時は緑、それ以外は枠線のみ） -->
+					<input type="radio" class="btn-check" 
+					th:name="'status-' + ${task.id}" 
+					th:id="'done-' + ${task.id}" 
+					value="DONE" 
+					th:checked="${task.status == 'DONE'}" 
+					th:onchange="updateStatus([[${task.id}]], this.value)" 
+					autocomplete="off">
+					<label class="btn btn-outline-success fw-bold py-0 px-2 small" th:for="'done-' + ${task.id}">完了済</label>
+					
+				</div>
+			</div>
+		</div>
+		
+		<!--期限の変更用モーダル-->
+		<div class="modal fade" th:id="'editDateModal-' + ${task.id}" tabindex="-1" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered modal-sm">
+				<div class="modal-content">
+					
+					<div class="modal-header py-2">
+						<h6 class="modal-title fw-bold">期限の変更</h6>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					
+					<div class="modal-body py-3">
+						<label class="form-label small text-muted">新しい期限を設定して下さい：</label>
+						<input type="date" class="form-control" th:id="'dateInput-' + ${task.id}" th:value="${task.inputDueDate}" required>
+					</div>
+					
+					<div class="modal-footer py-2">
+						<button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">キャンセル</button>
+						<button type="button" class="btn btn-primary btn-sm fw-bold" th:onclick="updateDueDate([[${task.id}]])">保存する</button>
+					</div>
+					
+				</div>
+			</div>
+		</div>
+		
+	</div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+</body>
+</html>
